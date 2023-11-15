@@ -34,6 +34,16 @@ export class AppService {
     return results;
   }
 
+  parallelPromises(): Promise<object[]> {
+    const results = [];
+
+    for (let i = 0; i < 10; i++) {
+      results.push(this.sleep(i));
+    }
+
+    return Promise.all(results);
+  }
+
   private sleep(id: number): Promise<object> {
     return new Promise((resolve) => {
       this.logger.log(`Start sleep #${id}`);

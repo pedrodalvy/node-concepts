@@ -24,4 +24,9 @@ export class AppController {
   promises(): Promise<object> {
     return this.appService.promises();
   }
+
+  @Get('parallelPromises')
+  parallelPromises(): Promise<object> {
+    return this.appService.parallelPromises();
+  }
 }

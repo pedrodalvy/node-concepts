@@ -17,3 +17,8 @@ Accept: application/json
 # @no-log
 GET http://localhost:3000/promises
 Accept: application/json
+
+### Parallel Promises
+# @no-log
+GET http://localhost:3000/parallelPromises
+Accept: application/json
