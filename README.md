@@ -1,73 +1,88 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Node Concepts
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a demonstration of some Node.js concepts, like concurrency and blocking operations, within
+a [NestJS](https://nestjs.com/) application.
+Additionally, it utilizes Kubernetes for container orchestration and includes an example of autoscaling based on CPU
+metrics.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Project Source
 
-## Description
+The structure and concepts of this project were inspired by the YouTube video
+titled [Three Concepts Every Node.js Developer Should Understand](https://www.youtube.com/watch?v=_cNIsBTg8HA).
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Setup
 
-## Installation
+### Minikube Setup
 
-```bash
-$ npm install
-```
+1. Start Minikube:
+    ```bash
+    minikube start
+    ```
 
-## Running the app
+2. Enable Metrics Server:
+    ```bash
+    minikube addons enable metrics-server
+    ```
+
+### Tilt Setup (Optional)
+
+Install [Tilt](https://docs.tilt.dev/install.html) for a more interactive development experience.
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+tilt up
 ```
 
-## Test
+### Without Tilt
+
+Build the Docker image and deploy the application to Minikube:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+minikube image build -t node-concepts .
+minikube kubectl -- apply -f kubernetes.yaml
+minikube kubectl -- port-forward service/node-concepts 3000:8000
 ```
 
-## Support
+### Execute Stress Tests
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Run simple stress tests using [autocannon](https://github.com/mcollina/autocannon):
 
-## Stay in touch
+```bash
+npm run autocannon -- localhost:3000/blocking -c 1000 -t 60 -d 900
+npm run autocannon -- localhost:3000/nonBlocking -c 1000 -t 60 -d 900
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Check the results by opening the Tilt dashboard (if using Tilt) or monitoring the terminal:
 
-## License
+```bash
+watch -n 1 kubectl get pod
+watch -n 1 kubectl top pod
+```
 
-Nest is [MIT licensed](LICENSE).
+### Cleanup
+
+After running all tests, delete the deployed resources:
+
+```bash
+minikube kubectl -- delete -f kubernetes.yaml
+```
+
+## Project Structure
+
+The project includes a simple NestJS application with various endpoints to demonstrate different Node.js concepts:
+
+- `/`: Hello World endpoint.
+- `/blocking`: Endpoint simulating a blocking operation.
+- `/nonBlocking`: Endpoint simulating a non-blocking operation.
+- `/promises`: Endpoint showcasing asynchronous operations with Promises.
+- `/parallelPromises`: Endpoint demonstrating parallel execution of Promises.
+
+## Autoscaling
+
+The Kubernetes deployment includes HorizontalPodAutoscaler for autoscaling based on CPU metrics.
+Adjustments to the autoscaling behavior can be made in the `kubernetes.yaml` file under the `HorizontalPodAutoscaler`
+section.
+
+## Notes
+
+- For a more interactive development experience, consider using Tilt.
+  It provides real-time updates and logs for your application.
