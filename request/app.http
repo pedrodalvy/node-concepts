@@ -1,0 +1,9 @@
+### Hello
+# @no-log
+GET http://localhost:3000/
+Accept: application/json
+
+### Blocking
+# @no-log
+GET http://localhost:3000/blocking
+Accept: application/json
