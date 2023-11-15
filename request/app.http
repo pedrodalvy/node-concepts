@@ -12,3 +12,8 @@ Accept: application/json
 # @no-log
 GET http://localhost:3000/nonBlocking
 Accept: application/json
+
+### Promises
+# @no-log
+GET http://localhost:3000/promises
+Accept: application/json
