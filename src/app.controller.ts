@@ -14,4 +14,9 @@ export class AppController {
   blocking(): object {
     return this.appService.blocking();
   }
+
+  @Get('nonBlocking')
+  nonBlocking(): Promise<object> {
+    return this.appService.nonBlocking();
+  }
 }

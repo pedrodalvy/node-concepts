@@ -7,3 +7,8 @@ Accept: application/json
 # @no-log
 GET http://localhost:3000/blocking
 Accept: application/json
+
+### Non Blocking
+# @no-log
+GET http://localhost:3000/nonBlocking
+Accept: application/json

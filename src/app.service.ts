@@ -13,4 +13,12 @@ export class AppService {
 
     return {};
   }
+
+  nonBlocking(): Promise<object> {
+    return new Promise((resolve: any) => {
+      setTimeout(() => {
+        resolve();
+      }, 10000);
+    });
+  }
 }
